@@ -75,26 +75,32 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(docker git zsh_reload zsh-interactive-cd zsh-autosuggestions zsh-syntax-highlighting zsh-completions)
+
+export NVM_LAZY_LOAD=true
+plugins=(zsh-nvm zsh-interactive-cd zsh_reload git zsh-syntax-highlighting zsh-autosuggestions)
 
 source $ZSH/oh-my-zsh.sh
 
 # User configuration
-# Java
-export JAVA_HOME="/usr/lib/jvm/java-8-openjdk-amd64"
-# Flutter
-export FLUTTER_HOME="/opt/flutter/bin"
-# Dart
-export DART_HOME="/opt/flutter/bin/cache/dart-sdk/bin"
-# Android
-export ANDROID_HOME=$HOME/Android/Sdk
-# Gradle
-export  GRADLE_HOME="/opt/gradle-6.6.1/bin"
-
-# Path
-export PATH=$PATH:$JAVA_HOME:$ANDROID_HOME/tools/:$ANDROID_HOME/tools/bin/:$FLUTTER_HOME:$DART_HOME:$GRADLE_HOME
 
 # export MANPATH="/usr/local/man:$MANPATH"
+#cuda
+export PATH=/usr/local/cuda-11.2/bin${PATH:+:${PATH}}
+export LD_LIBRARY_PATH=/usr/local/cuda-11.2/lib64/${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}
+
+
+# cudnn
+#export LD_LIBRARY_PATH=/usr/lib/cuda/lib64:$LD_LIBRARY_PATH
+#export LD_LIBRARY_PATH=/usr/lib/cuda/include:$LD_LIBRARY_PATH
+
+# flutter/dart
+export FLUTTER_HOME=/opt/flutter/bin
+
+# android 
+export ANDROID_HOME=$HOME/Android/Sdk
+
+# PATH
+export PATH=$PATH:$FLUTTER_HOME:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
 
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
@@ -119,4 +125,18 @@ export PATH=$PATH:$JAVA_HOME:$ANDROID_HOME/tools/:$ANDROID_HOME/tools/bin/:$FLUT
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+
+# Nvm
+
+#export NVM_DIR="$HOME/.nvm"
+#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+#[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Pyenv 
+export PYENV_ROOT="$HOME/.pyenv"
+export PATH="$PYENV_ROOT/bin:$PATH"
+if command -v pyenv 1>/dev/null 2>&1; then
+  eval "$(pyenv init -)"
+fi
+
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

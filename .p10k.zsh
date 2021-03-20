@@ -57,13 +57,13 @@
     pyenv                   # python environment (https://github.com/pyenv/pyenv)
     goenv                   # go environment (https://github.com/syndbg/goenv)
     nodenv                  # node.js version from nodenv (https://github.com/nodenv/nodenv)
-    nvm                     # node.js version from nvm (https://github.com/nvm-sh/nvm)
+    # nvm                     # node.js version from nvm (https://github.com/nvm-sh/nvm)
     nodeenv                 # node.js environment (https://github.com/ekalinin/nodeenv)
     node_version          # node.js version
     # go_version            # go version (https://golang.org)
     # rust_version          # rustc version (https://www.rust-lang.org)
     # dotnet_version        # .NET version (https://dotnet.microsoft.com)
-    # php_version           # php version (https://www.php.net/)
+    php_version           # php version (https://www.php.net/)
     # laravel_version       # laravel php framework version (https://laravel.com/)
     java_version          # java version (https://www.java.com/)
     # package               # name@version from package.json (https://docs.npmjs.com/files/package.json)
@@ -91,19 +91,20 @@
     nix_shell               # nix shell (https://nixos.org/nixos/nix-pills/developing-with-nix-shell.html)
     vi_mode                 # vi mode (you don't need this if you've enabled prompt_char)
     # vpn_ip                # virtual private network indicator
-    # load                  # CPU load
+    # load                  # CPU load  
     # disk_usage            # disk usage
-    my_wifi_signal
-    battery
     ram                     # free RAM
+    battery
     my_cpu_temp
     # swap                  # used swap
-    todo                    # todo items (https://github.com/todotxt/todo.txt-cli)
+    # todo                    # todo items (https://github.com/todotxt/todo.txt-cli)
     timewarrior             # timewarrior tracking status (https://timewarrior.net/)
     taskwarrior             # taskwarrior task count (https://taskwarrior.org/)
     # time                    # current time
     # =========================[ Line #2 ]=========================
     newline
+    my_wifi_signal
+    my_gpu_temp
     # ip                    # ip address and bandwidth usage for a specified network interface
     # public_ip             # public IP address
     # proxy                 # system-wide http/https/ftp proxy
@@ -1617,31 +1618,41 @@
   }
   # CPU Temperature
   function prompt_my_cpu_temp() {
-    integer cpu_temp="$(</sys/class/thermal/thermal_zone2/temp) / 1000"
+    integer cpu_temp="$(</sys/class/thermal/thermal_zone0/temp) / 1000"
     if (( cpu_temp >= 65 )); then
-      p10k segment -s HOT -f red -i "🥵" -t "${cpu_temp}°C"
-    elif (( cpu_temp >=55 )); then
-      p10k segment -s WARM -f yellow -i "🤢" -t "${cpu_temp}°C"
+      p10k segment -s HOT -b '160' -i "🥵" -t "${cpu_temp}°C"
+    elif (( cpu_temp >=40 )); then
+      p10k segment -s WARM -b '226' -i "🤢" -t "${cpu_temp}°C"
     else
-      p10k segment -s COLD -f blue -i "🥶" -t "${cpu_temp}°C"
+      p10k segment -s COLD -b '051' -i "🥶" -t "${cpu_temp}°C"
     fi
   }
   typeset -g POWERLEVEL9K_MY_CPU_TEMP_FOREGROUND=232
-  typeset -g POWERLEVEL9K_MY_CPU_TEMP_BACKGROUND=226
+  # typeset -g POWERLEVEL9K_MY_CPU_TEMP_BACKGROUND=226
   # Wifi Signal
   function prompt_my_wifi_signal() {
     integer wifi_signal="$(</proc/net/wireless | awk 'END { print $3 }' | sed 's/\.$//')"
     integer percent_signal=wifi_signal*10/7
-    if (( wifi_signal >= 90 )); then
-      p10k segment -s HIGH -f red -i "📶" -t "${percent_signal}"
-    elif (( wifi_signal >0 )); then
-      p10k segment -s LOW -f yellow -i "📶" -t "${percent_signal}"
+    if (( percent_signal >= 95 )); then
+      p10k segment -s HIGH -b '022' -i "" -t "${percent_signal}"
+    elif (( percent_signal > 0 )); then
+      p10k segment -s LOW -b '178' -i "" -t "${percent_signal}"
     else
-      p10k segment -s NONE -f white -i "✈️" -t "${percent_signal}"
+      p10k segment -s NONE -b '231' -i "✈" -t "${percent_signal}"
     fi
   }
-  typeset -g POWERLEVEL9K_MY_WIFI_SIGNAL_FOREGROUND=232
-  typeset -g POWERLEVEL9K_MY_WIFI_SIGNAL_BACKGROUND=208
+  function prompt_my_gpu_temp(){
+    integer gpu_temp="$(nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader)"
+    if (( gpu_temp >= 50 )); then
+      p10k segment -s HOT -b '160' -i "" -t "${gpu_temp}°C"
+    elif (( gpu_temp >=40 )); then
+      p10k segment -s WARM -b '226' -i "" -t "${gpu_temp}°C"
+    else
+      p10k segment -s COLD -b '051' -i "" -t "${gpu_temp}°C"
+    fi
+  }
+  # typeset -g POWERLEVEL9K_MY_WIFI_SIGNAL_FOREGROUND=232
+  # typeset -g POWERLEVEL9K_MY_WIFI_SIGNAL_BACKGROUND=208
 
   # User-defined prompt segments can be customized the same way as built-in segments.
   # typeset -g POWERLEVEL9K_EXAMPLE_FOREGROUND=3
